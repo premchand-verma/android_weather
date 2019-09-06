@@ -1,4 +1,4 @@
-package weather.android.com.utils
+package weather.android.com.util
 
 
 import android.text.TextUtils
