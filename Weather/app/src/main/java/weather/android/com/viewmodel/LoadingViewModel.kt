@@ -1,6 +1,7 @@
 package weather.android.com.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.getramblin.mobile.retrofit.ApiClient
@@ -10,6 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
 import retrofit2.HttpException
 import weather.android.com.model.ResponceDataModel
+import java.lang.Exception
 
 class LoadingViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -19,7 +21,7 @@ class LoadingViewModel(application: Application) : AndroidViewModel(application)
 
     fun doWeatherForeCasting(location:String){
         val apiService = ApiClient.create()
-        val days ="4"
+        val days ="5"
         val apiKey = "20f50a29a7944172b19105246190609"
         val observable: Observable<ResponceDataModel> = apiService.weatherForecast(apiKey, location, days)
         observable.observeOn(AndroidSchedulers.mainThread())
@@ -28,6 +30,7 @@ class LoadingViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun handleResponse(response: ResponceDataModel) {
+        Log.e("Test", response.location.name)
         successResponseData.value = response
     }
 
@@ -39,6 +42,8 @@ class LoadingViewModel(application: Application) : AndroidViewModel(application)
             val jsonResult = jsonObject.getJSONObject("error")
 
             errorResponseData.value = jsonResult.getString("message")
+        }else if(error is Exception){
+            errorResponseData.value = error.message
         }
     }
 }

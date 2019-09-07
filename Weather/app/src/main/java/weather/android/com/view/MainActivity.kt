@@ -1,4 +1,4 @@
-package weather.android.com
+package weather.android.com.view
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -12,9 +12,11 @@ import android.location.LocationManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.telephony.CellLocation.requestLocationUpdate
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import weather.android.com.LoadingFragment.*
+import weather.android.com.R
+import weather.android.com.view.LoadingFragment.*
 import weather.android.com.util.ManageFragment
 import java.io.IOException
 import java.util.*
@@ -28,7 +30,6 @@ class MainActivity : AppCompatActivity(), LoadingFragmentListener, LocationListe
     var isNetworkEnabled = false
 
     var currentLocation = ""
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,28 +51,12 @@ class MainActivity : AppCompatActivity(), LoadingFragmentListener, LocationListe
     @TargetApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingPermission")
     private fun getLocation() {
-        if (checkPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-            isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-
-            isNetworkEnabled =
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-            if (!isGPSEnabled && !isNetworkEnabled) {
-
-                Toast.makeText(this, "Please enable your location", Toast.LENGTH_SHORT)
-                    .show()
-
-            } else {
-                locationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER,
-                    5000,
-                    10f,
-                    this
-                )
-
-            }
-
+        if (checkPermissions(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        ) {
+           getLocationUpdate()
         } else {
             requestPermissions(
                 arrayOf(
@@ -84,6 +69,28 @@ class MainActivity : AppCompatActivity(), LoadingFragmentListener, LocationListe
     }
 
     @SuppressLint("MissingPermission")
+    private fun getLocationUpdate() {
+        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+
+        isNetworkEnabled =
+            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+        if (!isGPSEnabled && !isNetworkEnabled) {
+
+            Toast.makeText(this, "Please enable your device location", Toast.LENGTH_SHORT).show()
+
+        } else {
+            locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                5000,
+                10f,
+                this
+            )
+
+        }
+    }
+
+    @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -91,46 +98,22 @@ class MainActivity : AppCompatActivity(), LoadingFragmentListener, LocationListe
     ) {
         when (requestCode) {
             100 -> {
-
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-
-                    if (!isGPSEnabled && !isNetworkEnabled) {
-
-                        isGPSEnabled =
-                            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-
-                        isNetworkEnabled =
-                            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-                    }
-
-                    locationManager.requestLocationUpdates(
-                        LocationManager.NETWORK_PROVIDER,
-                        5000,
-                        10f,
-                        this
-                    )
-
+                    getLocationUpdate()
                 }
             }
-
         }
     }
 
 
     @SuppressLint("MissingPermission")
     override fun onLocationChanged(location: Location?) {
-
-
         if (location != null) {
             location.accuracy = 100f
-//            cordinates.setText("Cordinates - ${location.latitude}, ${location.longitude}")
-//            loc.setText("Cordinates - ${location.accuracy}, ${location.provider}")
             locationManager.removeUpdates(this)
 
             getAddressByLatLog(location.latitude, location.longitude)
-
         }
-
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
@@ -156,7 +139,6 @@ class MainActivity : AppCompatActivity(), LoadingFragmentListener, LocationListe
         }
     }
 
-
     fun getAddressByLatLog(lat: Double, lng: Double) {
         val geocoder = Geocoder(this, Locale.getDefault())
         try {
@@ -165,19 +147,8 @@ class MainActivity : AppCompatActivity(), LoadingFragmentListener, LocationListe
             currentLocation = obj.subAdminArea
 
             fragmentLoading.getLocationForecast(currentLocation)
-//            var add = obj.getAddressLine(0)
-//            add = add + "\n" + obj.countryName
-//            add = add + "\n" + obj.countryCode
-//            add = add + "\n" + obj.adminArea
-//            add = add + "\n" + obj.postalCode
-//            add = add + "\n" + obj.subAdminArea
-//            add = add + "\n" + obj.locality
-//            add = add + "\n" + obj.subLocality
-//            add = add + "\n" + obj.thoroughfare
-//            add = add + "\n" + obj.subThoroughfare
 
         } catch (e: IOException) {
-            // TODO Auto-generated catch block
             e.printStackTrace()
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
         }

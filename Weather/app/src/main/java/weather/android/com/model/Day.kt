@@ -1,11 +1,11 @@
 package weather.android.com.model
 
 data class Day(
-    val avghumidity: Int,
+    val avghumidity: Double,
     val avgtemp_c: Double,
     val avgtemp_f: Double,
     val avgvis_km: Double,
-    val avgvis_miles: Int,
+    val avgvis_miles: Double,
     val condition: ConditionX,
     val maxtemp_c: Double,
     val maxtemp_f: Double,
@@ -13,7 +13,7 @@ data class Day(
     val maxwind_mph: Double,
     val mintemp_c: Double,
     val mintemp_f: Double,
-    val totalprecip_in: Int,
-    val totalprecip_mm: Int,
+    val totalprecip_in: Double,
+    val totalprecip_mm: Double,
     val uv: Double
 )
