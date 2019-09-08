@@ -1,4 +1,4 @@
-package weather.android.com.retrofit
+package weather.android.com.util.retrofit
 
 
 import io.reactivex.Observable

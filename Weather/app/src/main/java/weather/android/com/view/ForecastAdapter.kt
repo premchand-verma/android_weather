@@ -28,12 +28,15 @@ class ForecastAdapter(val ctx:Context, val list:List<Forecastday>) : RecyclerVie
          val txt_day = view.txt_day
          val txt_temp = view.txt_temp
         fun bindView(data: Forecastday) {
-            val format1 = SimpleDateFormat("yyyy-MM-dd")
-            val dt1 = format1.parse(data.date)
-            val format2 = SimpleDateFormat("EEEE")
-            val finalDay = format2.format(dt1)
-            txt_day.text = finalDay
-            txt_temp.text = data.day.avgtemp_c.toInt().toString()+" C"
+            txt_day.text = getDayFromDate(data.date)
+            txt_temp.text = data.day.avgtemp_c.toInt().toString()+" °C"
         }
-    }
+
+         private fun getDayFromDate(date: String): String {
+             val format1 = SimpleDateFormat("yyyy-MM-dd")
+             val dt1 = format1.parse(date)
+             val format2 = SimpleDateFormat("EEEE")
+             return format2.format(dt1)
+         }
+     }
 }
