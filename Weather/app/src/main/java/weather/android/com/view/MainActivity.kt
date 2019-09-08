@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity(), LoadingFragmentListener, LocationListe
         getLocation()
 
         addLoadingFragment()
-
     }
 
     private fun addLoadingFragment() {
